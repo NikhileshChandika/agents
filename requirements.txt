@@ -42,4 +42,19 @@ response = client.chat.completions.create(
     model=deployment
 )
 
+import boto3
+import json
+
+client = boto3.client('bedrock-agentcore', region_name='ap-southeast-2')
+payload = json.dumps({"prompt": "Explain machine learning in simple terms"})
+
+response = client.invoke_agent_runtime(
+    agentRuntimeArn='arn:aws:bedrock-agentcore:ap-southeast-2:737787212609:runtime/hosted_agent_cnwvg-waykc5HlXX',
+    runtimeSessionId='<Enter your SessionId>', # Must be 33+ char. Every new SessionId will create a new MicroVM
+    payload=payload,
+    qualifier="<Replace with your Endpoint>" # This is Optional. When the field is not provided, Runtime will use DEFAULT endpoint
+)
+response_body = response['response'].read()
+response_data = json.loads(response_body)
+print("Agent Response:", response_data)
 print(response.choices[0].message.content)
